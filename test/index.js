@@ -1,8 +1,8 @@
 const { strict: assert } = require('assert')
-const ethUtil = require('ethereumjs-util')
+const ethUtil = require('@alayanetwork/ethereumjs-util')
 
 const { BN } = ethUtil
-const sigUtil = require('eth-sig-util')
+const sigUtil = require('@alayanetwork/eth-sig-util')
 
 const normalizeAddress = sigUtil.normalize
 const sinon = require('sinon')
