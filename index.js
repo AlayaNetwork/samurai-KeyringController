@@ -37,8 +37,7 @@ class KeyringController extends EventEmitter {
     this.encryptor = opts.encryptor || encryptor
     this.keyrings = []
     this.getNetwork = opts.getNetwork
-    this.hrp = opts.hrp
-    // this.hrp = this.getNetwork() === '201018'? 'atp': 'atx'
+    this.getHrp = opts.getHrp
   }
 
   /**
@@ -109,8 +108,7 @@ class KeyringController extends EventEmitter {
         })
       })
       .then((firstKeyring) => {
-        this.hrp = this.getNetwork() === '201018'? 'atp': 'atx'
-        return firstKeyring.getAccounts(this.hrp)
+        return firstKeyring.getAccounts(this.getHrp())
       })
       .then(([firstAccount]) => {
         if (!firstAccount) {
@@ -195,8 +193,7 @@ class KeyringController extends EventEmitter {
   addNewKeyring (type, opts) {
     const  Keyring = this.getKeyringClassForType(type)
     const keyring = new Keyring(opts)
-    this.hrp = this.getNetwork() === '201018'? 'atp': 'atx'
-    return keyring.getAccounts(this.hrp)
+    return keyring.getAccounts(this.getHrp())
       .then((accounts) => {
         return this.checkForDuplicate(type, accounts)
       })
@@ -225,7 +222,7 @@ class KeyringController extends EventEmitter {
     // in order to decide which ones are now valid (accounts.length > 0)
 
     await Promise.all(this.keyrings.map(async (keyring) => {
-      const accounts = await keyring.getAccounts(this.hrp)
+      const accounts = await keyring.getAccounts(this.getHrp())
       if (accounts.length > 0) {
         validKeyrings.push(keyring)
       }
@@ -326,7 +323,7 @@ class KeyringController extends EventEmitter {
         if (typeof keyring.removeAccount === 'function') {
           keyring.removeAccount(address)
           this.emit('removedAccount', address)
-          return keyring.getAccounts(this.hrp)
+          return keyring.getAccounts(this.getHrp())
         }
         return Promise.reject(new Error(
           `Keyring ${keyring.type} doesn't support account removal operations`,
@@ -498,7 +495,7 @@ class KeyringController extends EventEmitter {
     this.clearKeyrings()
     return this.addNewKeyring('HD Key Tree', { numberOfAccounts: 1 })
       .then((keyring) => {
-        return keyring.getAccounts(this.hrp)
+        return keyring.getAccounts(this.getHrp())
       })
       .then(([firstAccount]) => {
         if (!firstAccount) {
@@ -603,7 +600,7 @@ class KeyringController extends EventEmitter {
     const keyring = new Keyring()
     await keyring.deserialize(data)
     // getAccounts also validates the accounts for some keyrings
-    await keyring.getAccounts(this.hrp)
+    await keyring.getAccounts(this.getHrp())
     this.keyrings.push(keyring)
     return keyring
   }
@@ -645,7 +642,7 @@ class KeyringController extends EventEmitter {
    */
   async getAccounts () {
     const keyrings = this.keyrings || []
-    let addrs = await Promise.all(keyrings.map((kr) => kr.getAccounts(this.hrp)))
+    let addrs = await Promise.all(keyrings.map((kr) => kr.getAccounts(this.getHrp())))
       .then((keyringArrays) => {
         return keyringArrays.reduce((res, arr) => {
           return res.concat(arr)
@@ -674,7 +671,7 @@ class KeyringController extends EventEmitter {
     return Promise.all(this.keyrings.map((keyring) => {
       return Promise.all([
         keyring,
-        keyring.getAccounts(this.hrp),
+        keyring.getAccounts(this.getHrp()),
       ])
     }))
       .then((candidates) => {
@@ -698,8 +695,7 @@ class KeyringController extends EventEmitter {
    * @returns {Promise<Object>} A keyring display object, with type and accounts properties.
    */
   displayForKeyring (keyring) {
-    this.hrp = this.getNetwork() === '201018'? 'atp': 'atx'
-    return keyring.getAccounts(this.hrp)
+    return keyring.getAccounts(this.getHrp())
       .then((accounts) => {
         return {
           type: keyring.type,
