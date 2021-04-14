@@ -1,4 +1,3 @@
-
 const { EventEmitter } = require('events')
 const log = require('loglevel')
 const ethUtil = require('@alayanetwork/ethereumjs-util')
@@ -191,7 +190,7 @@ class KeyringController extends EventEmitter {
    * @returns {Promise<Keyring>} The new keyring.
    */
   addNewKeyring (type, opts) {
-    const  Keyring = this.getKeyringClassForType(type)
+    const Keyring = this.getKeyringClassForType(type)
     const keyring = new Keyring(opts)
     return keyring.getAccounts(this.getHrp())
       .then((accounts) => {
@@ -321,7 +320,7 @@ class KeyringController extends EventEmitter {
       .then((keyring) => {
         // Not all the keyrings support this, so we have to check
         if (typeof keyring.removeAccount === 'function') {
-          keyring.removeAccount(address)
+          keyring.removeAccount(ethUtil.decodeBech32Address(address))
           this.emit('removedAccount', address)
           return keyring.getAccounts(this.getHrp())
         }

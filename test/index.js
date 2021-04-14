@@ -8,9 +8,9 @@ const normalizeAddress = sigUtil.normalize
 const sinon = require('sinon')
 const Wallet = require('ethereumjs-wallet')
 
+const KeyringController = require('..')
 const configManagerGen = require('./lib/mock-config-manager')
 const mockEncryptor = require('./lib/mock-encryptor')
-const KeyringController = require('..')
 
 const mockAddress = '0xeF35cA8EbB9669A35c31b5F6f249A9941a812AC1'.toLowerCase()
 

@@ -1,6 +1,6 @@
 {
   "name": "@alayanetwork/eth-keyring-controller",
-  "version": "6.1.1",
+  "version": "6.1.2",
   "description": "A module for managing various keyrings of PlatON accounts, encrypting them, and using them.",
   "main": "index.js",
   "scripts": {
